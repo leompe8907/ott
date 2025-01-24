@@ -1,0 +1,64 @@
+.profiles-page {
+  background-color: black;
+  color: white;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+
+  .loading {
+    font-size: 1.2rem;
+    color: white;
+  }
+
+  .actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+
+    .add-profile-button {
+      background-color: green;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+
+      &:hover {
+        background-color: darkgreen;
+      }
+
+      &:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+      }
+    }
+
+    .edit-profiles-button {
+      background-color: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darkblue;
+      }
+    }
+  }
+
+  .error {
+    color: red;
+    margin-top: 20px;
+  }
+}

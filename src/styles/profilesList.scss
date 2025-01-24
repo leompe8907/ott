@@ -1,0 +1,43 @@
+.profiles-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+
+  .profile-card {
+    text-align: center;
+    background-color: #222;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.1);
+      border: 2px solid #fff;
+    }
+
+    img {
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+    }
+
+    p {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: white;
+    }
+  }
+
+  .no-profiles {
+    font-size: 1.2rem;
+    color: white;
+  }
+}
