@@ -1,49 +1,68 @@
 import React, { useState, useEffect } from "react";
 import BackendService from "../services/backendService";
 import Img from "../constants/images"; // Lista de imágenes
+import Modal from "../components/Modal"; // Componente Modal
 import "../styles/profile.scss";
 
 const Profiles = () => {
   const [smartCards, setSmartCards] = useState([]); // Información de las tarjetas inteligentes
   const [profiles, setProfiles] = useState([]); // Lista de perfiles
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+
   const [newProfileName, setNewProfileName] = useState(""); // Nombre del nuevo perfil
   const [selectedImage, setSelectedImage] = useState(Img[0].id); // Imagen seleccionada
 
-  // Fetch perfiles
+  // Estado para el modal de mensajes
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState("success");
+
+  // Función para mostrar el modal con mensajes
+  const showModal = (message, type = "success") => {
+    setModalMessage(message);
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+
+  // Obtener lista de perfiles
   const fetchProfiles = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await BackendService.callAuthenticatedApi("getClientConfig");
       if (response && response.profiles) {
         setProfiles(response.profiles);
       } else {
-        setError("No se encontraron perfiles disponibles.");
+        showModal("No se encontraron perfiles disponibles.", "error");
       }
     } catch (err) {
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch tarjetas inteligentes
+  // Obtener tarjetas inteligentes y filtrar por licencias con productos asociados
   const fetchSmartCards = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await BackendService.callAuthenticatedApi("getStreamingLicenses", {
         withPins: true,
       });
       if (response) {
-        setSmartCards(response);
+        // Filtrar solo las licencias con productos asociados
+        const validLicenses = response.filter((license) => license.products && license.products.trim() !== "");
+
+        if (validLicenses.length === 0) {
+          showModal("No hay licencias con productos asociados disponibles.", "error");
+        }
+
+        setSmartCards(validLicenses);
       } else {
-        setError("No se encontraron tarjetas inteligentes.");
+        showModal("No se encontraron tarjetas inteligentes.", "error");
       }
     } catch (err) {
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -52,20 +71,19 @@ const Profiles = () => {
   // Crear perfil
   const createProfile = async () => {
     if (!newProfileName.trim()) {
-      setError("El nombre del perfil no puede estar vacío.");
+      showModal("El nombre del perfil no puede estar vacío.", "error");
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
 
       // Validar si hay tarjetas inteligentes disponibles
       const availableCards = smartCards.filter(
         (card) => !profiles.some((profile) => profile.sn === card.key)
       );
       if (availableCards.length === 0) {
-        setError("No hay tarjetas inteligentes disponibles para crear un nuevo perfil.");
+        showModal("No hay tarjetas inteligentes disponibles para crear un nuevo perfil.", "error");
         return;
       }
 
@@ -86,7 +104,7 @@ const Profiles = () => {
       setNewProfileName("");
       setSelectedImage(Img[0].id);
     } catch (err) {
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -94,19 +112,17 @@ const Profiles = () => {
 
   // Eliminar perfil
   const deleteProfile = async (profileId) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este perfil?")) {
+    if (showModal("¿Estás seguro de que deseas eliminar este perfil?")) {
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
-
       await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
       fetchProfiles();
-      alert("Perfil eliminado exitosamente.");
+      showModal("Perfil eliminado exitosamente.", "success");
     } catch (err) {
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -116,15 +132,10 @@ const Profiles = () => {
   const activateProfile = async (profileId) => {
     try {
       setLoading(true);
-      setError(null);
-
-      await BackendService.callAuthenticatedApi("setActiveProfile", { 
-        profileId,
-        deviceName:"Web"
-       });
-      alert("Perfil activado correctamente.");
+      await BackendService.callAuthenticatedApi("setActiveProfile", { profileId, deviceName: "Web" });
+      showModal("Perfil activado correctamente.", "success");
     } catch (err) {
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -135,11 +146,11 @@ const Profiles = () => {
     fetchSmartCards();
   }, []);
 
-  return (
+   return (
     <div className="profiles-container">
       <h1>Gestión de Perfiles</h1>
       {loading && <p>Cargando...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <div className="profiles-list">
         {profiles.length > 0 ? (
           profiles.map((profile) => (
@@ -149,31 +160,10 @@ const Profiles = () => {
                 src={`https://cv01.panaccess.com/cv_data_pub/images/${profile.imageId}/v/thumb.png`}
                 alt={`Imagen de ${profile.name}`}
               />
-              <button
-                onClick={() => activateProfile(profile.id)}
-                style={{
-                  backgroundColor: "blue",
-                  color: "white",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  margin: "5px",
-                }}
-              >
+              <button onClick={() => activateProfile(profile.id)} className="btn-activate">
                 Activar
               </button>
-              <button
-                onClick={() => deleteProfile(profile.id)}
-                style={{
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
+              <button onClick={() => deleteProfile(profile.id)} className="btn-delete">
                 Eliminar
               </button>
             </div>
@@ -212,19 +202,14 @@ const Profiles = () => {
         </button>
       </div>
 
-      <div className="smart-card-info">
-        <h2>Información de Tarjetas Inteligentes</h2>
-        {smartCards.length > 0 ? (
-          smartCards.map((card, index) => (
-            <div key={index}>
-              <p>Serial: {card.key}</p>
-              <p>Licencia: {card.licenseName}</p>
-            </div>
-          ))
-        ) : (
-          <p>No hay tarjetas disponibles.</p>
-        )}
-      </div>
+      {/* Modal de mensajes */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalType === "success" ? "Éxito" : "Error"}
+        message={modalMessage}
+        type={modalType}
+      />
     </div>
   );
 };

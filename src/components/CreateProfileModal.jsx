@@ -1,19 +1,32 @@
 import React, { useState } from "react";
 import Img from "../constants/images"; // Lista de imágenes
+import Modal from "./Modal";
 import "../styles/createProfileModal.scss";
 
 const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) => {
   const [newProfileName, setNewProfileName] = useState("");
   const [selectedImage, setSelectedImage] = useState(Img[0]?.id || null);
 
+  // Estado del modal de mensajes
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState("success");
+
+  // Función para mostrar el modal con mensajes
+  const showModal = (message, type = "error") => {
+    setModalMessage(message);
+    setModalType(type);
+    setModalOpen(true);
+  };
+
   const handleCreateProfile = () => {
     if (!newProfileName.trim()) {
-      alert("El nombre del perfil no puede estar vacío.");
+      showModal("El nombre del perfil no puede estar vacío.");
       return;
     }
 
     if (!selectedImage) {
-      alert("Debe seleccionar una imagen.");
+      showModal("Debe seleccionar una imagen.");
       return;
     }
 
@@ -23,7 +36,7 @@ const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) 
     );
 
     if (!availableSmartCard) {
-      alert("No hay tarjetas inteligentes disponibles para crear un nuevo perfil.");
+      showModal("No hay tarjetas inteligentes disponibles para crear un nuevo perfil.");
       return;
     }
     console.log(availableSmartCard);
@@ -39,7 +52,11 @@ const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) 
     // Limpiar el formulario y cerrar el modal
     setNewProfileName("");
     setSelectedImage(Img[0]?.id || null);
-    onClose();
+    showModal("Perfil creado exitosamente.", "success");
+
+    setTimeout(() => {
+      onClose();
+    }, 2000); // Cierra el modal después de 2 segundos
   };
 
   return (
@@ -77,6 +94,14 @@ const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) 
         </button>
         </div>
       </div>
+      {/* Modal de mensajes */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalType === "success" ? "Éxito" : "Error"}
+        message={modalMessage}
+        type={modalType}
+      />
     </div>
   );
 };

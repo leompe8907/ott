@@ -4,6 +4,7 @@ import CreateProfileModal from "../components/CreateProfileModal";
 import EditProfilesModal from "../components/EditProfilesModal";
 import ProfilesList from "../components/ProfilesList";
 import BackendService from "../services/backendService";
+import Modal from "../components/Modal"; // Importar el modal
 import "../styles/profilesPage.scss";
 
 const ProfilesPage = () => {
@@ -12,11 +13,22 @@ const ProfilesPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  // Estado para el modal de mensajes
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState("success");
 
   const navigate = useNavigate();
 
-  // Fetch profiles and smart cards from the backend
+  // Función para mostrar el modal con mensajes
+  const showModal = (message, type = "success") => {
+    setModalMessage(message);
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+  // Obtener perfiles y tarjetas inteligentes
   const fetchProfilesAndSmartCards = async () => {
     setLoading(true);
     try {
@@ -24,29 +36,41 @@ const ProfilesPage = () => {
       const smartCardResponse = await BackendService.callAuthenticatedApi("getStreamingLicenses", {
         withPins: true,
       });
+      
+      // Filtrar solo las tarjetas inteligentes con productos asociados
+      const validSmartCards = smartCardResponse.filter(
+        (card) => card.products && card.products.trim() !== ""
+      );
 
       setProfiles(profileResponse?.profiles || []);
-      setSmartCards(smartCardResponse || []);
+      setSmartCards(validSmartCards || []);
+
+      if (validSmartCards.length === 0) {
+        showModal("No hay licencias con productos asociados disponibles.", "error");
+      }
     } catch (err) {
       console.error("Error al obtener perfiles o tarjetas inteligentes:", err);
-      setError("Hubo un problema al cargar los datos. Intenta nuevamente.");
+      showModal("Hubo un problema al cargar los datos. Intenta nuevamente.", "error");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteProfile = async (profileId) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este perfil?")) {
+    if (showModal("¿Estás seguro de que deseas eliminar este perfil?")) {
       return;
     }
   
     try {
+      setLoading(true);
       await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
-      alert("Perfil eliminado exitosamente.");
       fetchProfilesAndSmartCards(); // Refrescar perfiles después de eliminar
+      showModal("Perfil eliminado exitosamente.", "success");
     } catch (err) {
       console.error("Error al eliminar perfil:", err);
-      setError("Hubo un error al eliminar el perfil. Intenta nuevamente.");
+      showModal("Hubo un error al eliminar el perfil. Intenta nuevamente.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,9 +80,10 @@ const ProfilesPage = () => {
       await BackendService.callAuthenticatedApi("createProfile", newProfile);
       fetchProfilesAndSmartCards(); // Actualizar la lista de perfiles
       setShowCreateModal(false); // Cerrar el modal
+      showModal("Perfil creado exitosamente.", "success");
     } catch (err) {
       console.error("Error al crear perfil:", err);
-      setError(err.message);
+      showModal(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -90,7 +115,7 @@ const ProfilesPage = () => {
       await BackendService.callAuthenticatedApi("setActiveProfile", { 
         profileId,
         activate:true,
-        deviceName:"Roku",
+        deviceName:"Web",
         failIfInUse: false,
         pin: pin
       });
@@ -100,7 +125,7 @@ const ProfilesPage = () => {
       //navigate("/bouquets"); // Por ejemplo, redirigir a la página principal
     } catch (err) {
       console.error("Error al activar perfil:", err);
-      setError("No se pudo activar el perfil. Intenta nuevamente.");
+      showModal("No se pudo activar el perfil. Intenta nuevamente.", "error");
     }
   };
 
@@ -112,15 +137,15 @@ const ProfilesPage = () => {
       if (activeProfile?.activeInThisSession) {
         console.log("El perfil está activo en esta sesión:", activeProfile.name);
         // Aquí puedes proceder con la lógica adicional, como redirigir al home
-        alert(`Perfil "${activeProfile.name}" activado correctamente.`);
+        showModal(`Perfil "${activeProfile.name}" activado correctamente.`, "success");
         navigate("/bouquets");
       } else {
         console.log("El perfil no está activo en esta sesión.");
-        alert("No se pudo activar el perfil. Intenta nuevamente.");
+        showModal("No se pudo activar el perfil. Intenta nuevamente.", "error");
       }
     } catch (error) {
       console.error("Error al validar el perfil activo:", error);
-      setError("Hubo un problema al validar el perfil activo.");
+      showModal("Hubo un problema al validar el perfil activo.", "error");
     }
   };
   
@@ -162,7 +187,15 @@ const ProfilesPage = () => {
           onDeleteProfile={handleDeleteProfile}
         />
       )}
-      {error && <p className="error">{error}</p>}
+
+      {/* Modal de mensajes */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalType === "success" ? "Éxito" : "Error"}
+        message={modalMessage}
+        type={modalType}
+      />
     </div>
   );
 };
