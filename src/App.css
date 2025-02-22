@@ -1,38 +1,58 @@
-.App {
+/* App.css */
+
+/* Global body styles */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #0c0c0c; /* Fondo oscuro */
+  color: #ffffff; /* Texto blanco */
+  line-height: 1.6;
+}
+
+/* Botones de acción */
+.btn {
+  padding: 12px 25px;
+  background-color: #e50914; /* Rojo brillante */
+  color: #f4f4f4; /* Texto blanco */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.btn:hover {
+  background-color: #b30000; /* Rojo más oscuro para hover */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Enlaces */
+a {
+  color: #e50914; /* Rojo brillante */
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+a:hover {
+  color: #1db954; /* Verde brillante similar a Disney+ */
 }
 
-.App-link {
-  color: #61dafb;
+/* Modal Overlay */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Modal Content */
+.modal-content {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  color: #f4f4f4;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollable container */
+.scrollable-container {
+  max-height: 80vh;
+  overflow-y: auto;
 }

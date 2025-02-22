@@ -1,149 +1,134 @@
-.general 
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Nunito', sans-serif;
-    font-size: 22px;
-    color: #fff;
+/* login.scss */
+
+/* Fondo general oscuro */
+.general {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; 
-    padding: 1rem 0.5rem;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8); /* Fondo oscuro con opacidad */
     background-image: url("../media/BGbromteck.png");
-    background-size: cover;
+    background-size: cover; /* Imagen de fondo en cover */
+}
 
-    section 
-    {
-        width: 100%;
-        max-width: 360px;
-        min-height: 540px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        padding: 1rem;
-        background-color: rgba(0, 0, 0, 0.39);
-        border-radius: 15px;
-        box-shadow: 2px 2px 9px 6px rgba(0,0,0,0.66);
-        -webkit-box-shadow: 2px 2px 9px 6px rgba(0,0,0,0.66);
-        -moz-box-shadow: 2px 2px 9px 6px rgba(0,0,0,0.66);
-        .top
-        {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            .logoB
-            {
-                width: 100px;
-                align-items: center;
-            }
-            h1
-            {
-                padding-top: 10px;
-            }
-        }
-        form 
-        {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        flex-grow: 1;
-        padding-bottom: 1rem;
-        }
+/* Formulario de login */
+section {
+    background: #22222257; /* Fondo oscuro para el formulario */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.6);
+    width: 300px;
+    animation: fadeIn 0.5s ease-in-out;
+    position: relative;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-
-
-
-
-a, a:visited 
-{
-    color: rgb(255, 255, 255);
-}
-
-input[type="text"],
-input[type="password"],
-button,
-textarea 
-{
-  font-family: 'Nunito', sans-serif;
-  font-size: 22px;
-  padding: 0.25rem;
-  border-radius: 0.5rem;
-}
-
-label,
-button {
-  margin-top: 1rem;
-}
-
-button {
-  padding: 0.5rem;
-}
-
-.instructions {
-    font-size: 0.75rem;
-    border-radius: 0.5rem;
-    background: #000;
-    color: #fff;
-    padding: 0.25rem;
+/* Estilos de los inputs */
+.input-container {
     position: relative;
-    bottom: -10px;
+    margin-bottom: 20px;
 }
 
-.instructions > svg {
-    margin-right: 0.25rem;
-}
-
-.offscreen {
+/* Estilos para el label */
+label {
     position: absolute;
-    left: -9999px;
+    left: 15px;
+    top: 18px;
+    font-size: 16px;
+    color: #aaa;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
 }
 
-.hide {
-    display: none;
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: #aaa;
+    z-index: 2;
+
+    &:hover {
+        color: #e50914; /* Color del ícono en hover */
+    }
 }
 
-.valid {
-    color: rgb(6, 245, 86);
-    margin-left: 0.25rem;
+/* Cambiar el borde del input cuando esté enfocado o tenga texto */
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
-.invalid {
-    color: red;
-    margin-left: 0.25rem;
+/* Estilo cuando el input tiene foco o contiene texto */
+input:focus ~ label,
+input:not(:placeholder-shown) ~ label {
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    color: #e50914; /* Rojo brillante */
 }
 
-.line {
-    display: inline-block;
+/* Estilo del botón de login */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #e50914; /* Rojo brillante */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #b30000; /* Rojo más oscuro en hover */
+    }
 }
 
-.modal-overlay {
+/* Modal */
+.Modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    right: 0;
+    bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.ModalContent {
+    background: #333;
+    padding: 30px;
+    border-radius: 12px;
+    color: #fff;
+    width: 80%;
+    max-width: 400px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: #000;
-  }
-  
-  .modal-content p {
-    margin-bottom: 20px;
-  }
-  
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.6);
+}

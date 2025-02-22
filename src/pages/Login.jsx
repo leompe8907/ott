@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import BackendService from "../services/backendService";
 import GetUdid from "../cv/Udid";
@@ -8,13 +10,14 @@ import Modal from "../components/Modal";
 import "../styles/login.scss";
 
 const Login = () => {
+  const { t } = useTranslation(); // Usar el hook para obtener la función de traducción
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const secretKey = "CEVQmnhOsXvpRQZbGADl"
+  const secretKey = "CEVQmnhOsXvpRQZbGADl";
 
   const navigate = useNavigate();
 
@@ -43,23 +46,32 @@ const Login = () => {
       }
 
       // Encriptar
-      const encryptedUsername = CryptoJS.AES.encrypt(username, secretKey).toString();
-      const encryptedPassword = CryptoJS.AES.encrypt(password, secretKey).toString();
+      const encryptedUsername = CryptoJS.AES.encrypt(
+        username,
+        secretKey
+      ).toString();
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        password,
+        secretKey
+      ).toString();
 
       // Guardar el sessionId
       localStorage.setItem("sessionId", sessionId);
-      localStorage.setItem("username",encryptedUsername );
-      localStorage.setItem("password",encryptedPassword );
+      localStorage.setItem("username", encryptedUsername);
+      localStorage.setItem("password", encryptedPassword);
       console.log("Login exitoso. Session ID guardado:", sessionId);
 
       // Redirigir al profiles
       navigate("/profiles");
     } catch (err) {
-      setError(err.message);
       setModalMessage(err.message);
       setModalOpen(true);
       console.error("Error en el login:", err);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // Cambiar el estado de visibilidad de la contraseña
   };
 
   const closeModal = () => {
@@ -70,30 +82,48 @@ const Login = () => {
   return (
     <div className="general">
       <section>
-        <h1>Sign In</h1>
+        <h1>{t("signIn")}</h1> {/* Usar traducción aquí */}
         <form onSubmit={handleSubmit}>
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Sign In</button>
-          {/* {error && <p className="error">{error}</p>} */}
+          <div className="input-container">
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              placeholder=" " // Es necesario para que funcione el efecto de animación
+            />
+            <label htmlFor="username" className="username">
+              {t("username")}
+            </label>{" "}
+            {/* Usar traducción aquí */}
+          </div>
+          <div className="input-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder=" " // Es necesario para que funcione el efecto de animación
+            />
+            <label htmlFor="password" className="password">
+              {t("password")}
+            </label>{" "}
+            {/* Usar traducción aquí */}
+            <span
+              className="password-toggle"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Icono de ojo */}
+            </span>
+          </div>
+          <button type="submit">{t("signInButton")}</button>{" "}
+          {/* Usar traducción aquí */}
         </form>
       </section>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Error de inicio de sesión</h2>
+        <h2>{t("loginError")}</h2> {/* Usar traducción aquí */}
         <p>{modalMessage}</p>
       </Modal>
     </div>
