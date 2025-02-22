@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next"; // Importar hook de i18n
 
 import BackendService from "../services/backendService";
 import GetUdid from "../cv/Udid";
@@ -42,7 +42,7 @@ const Login = () => {
 
       // Validar que sessionId es válido
       if (!sessionId || sessionId.length === 0) {
-        throw new Error("Error en el usuario o contraseña.");
+        throw new Error(t("incorrectCredentials")); // Usar traducción aquí
       }
 
       // Encriptar
@@ -82,7 +82,7 @@ const Login = () => {
   return (
     <div className="general">
       <section>
-        <h1>{t("signIn")}</h1> {/* Usar traducción aquí */}
+        <h1>{t("signIn")}</h1> {/* Traducción del título */}
         <form onSubmit={handleSubmit}>
           <div className="input-container">
             <input
@@ -96,7 +96,7 @@ const Login = () => {
             <label htmlFor="username" className="username">
               {t("username")}
             </label>{" "}
-            {/* Usar traducción aquí */}
+            {/* Traducción del campo Username */}
           </div>
           <div className="input-container">
             <input
@@ -110,7 +110,7 @@ const Login = () => {
             <label htmlFor="password" className="password">
               {t("password")}
             </label>{" "}
-            {/* Usar traducción aquí */}
+            {/* Traducción del campo Password */}
             <span
               className="password-toggle"
               onClick={togglePasswordVisibility}
@@ -119,11 +119,11 @@ const Login = () => {
             </span>
           </div>
           <button type="submit">{t("signInButton")}</button>{" "}
-          {/* Usar traducción aquí */}
+          {/* Traducción del botón Sign In */}
         </form>
       </section>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>{t("loginError")}</h2> {/* Usar traducción aquí */}
+        <h2>{t("loginError")}</h2> {/* Traducción del título del modal */}
         <p>{modalMessage}</p>
       </Modal>
     </div>
