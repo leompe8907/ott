@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import BackendService from "../services/backendService";
 import Img from "../constants/images"; // Lista de imágenes
-import Modal from "../components/Modal"; // Componente Modal
+import Modal from "../components/Modal"; // Importar el componente modal
 import "../styles/profile.scss";
 
 const Profiles = () => {
@@ -17,7 +17,7 @@ const Profiles = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalType, setModalType] = useState("success");
 
-  // Función para mostrar el modal con mensajes
+  // Mostrar modal con mensaje
   const showModal = (message, type = "success") => {
     setModalMessage(message);
     setModalType(type);
@@ -50,13 +50,13 @@ const Profiles = () => {
         withPins: true,
       });
       if (response) {
-        // Filtrar solo las licencias con productos asociados
+        // Filtrar solo las licencias que tienen un producto asociado
         const validLicenses = response.filter((license) => license.products && license.products.trim() !== "");
 
         if (validLicenses.length === 0) {
           showModal("No hay licencias con productos asociados disponibles.", "error");
         }
-
+  
         setSmartCards(validLicenses);
       } else {
         showModal("No se encontraron tarjetas inteligentes.", "error");
@@ -103,6 +103,7 @@ const Profiles = () => {
       fetchSmartCards();
       setNewProfileName("");
       setSelectedImage(Img[0].id);
+      showModal("Perfil creado exitosamente.", "success");
     } catch (err) {
       showModal(err.message, "error");
     } finally {
@@ -118,6 +119,7 @@ const Profiles = () => {
 
     try {
       setLoading(true);
+
       await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
       fetchProfiles();
       showModal("Perfil eliminado exitosamente.", "success");
@@ -132,7 +134,11 @@ const Profiles = () => {
   const activateProfile = async (profileId) => {
     try {
       setLoading(true);
-      await BackendService.callAuthenticatedApi("setActiveProfile", { profileId, deviceName: "Web" });
+
+      await BackendService.callAuthenticatedApi("setActiveProfile", { 
+        profileId,
+        deviceName:"Web"
+      });
       showModal("Perfil activado correctamente.", "success");
     } catch (err) {
       showModal(err.message, "error");
@@ -146,7 +152,7 @@ const Profiles = () => {
     fetchSmartCards();
   }, []);
 
-   return (
+  return (
     <div className="profiles-container">
       <h1>Gestión de Perfiles</h1>
       {loading && <p>Cargando...</p>}

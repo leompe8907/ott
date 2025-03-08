@@ -4,7 +4,7 @@ import CreateProfileModal from "../components/CreateProfileModal";
 import EditProfilesModal from "../components/EditProfilesModal";
 import ProfilesList from "../components/ProfilesList";
 import BackendService from "../services/backendService";
-import Modal from "../components/Modal"; // Importar el modal
+import Modal from "../components/Modal";
 import "../styles/profilesPage.scss";
 
 const ProfilesPage = () => {
@@ -13,6 +13,7 @@ const ProfilesPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  //const [error, setError] = useState(null);
 
   // Estado para el modal de mensajes
   const [modalOpen, setModalOpen] = useState(false);
@@ -36,7 +37,7 @@ const ProfilesPage = () => {
       const smartCardResponse = await BackendService.callAuthenticatedApi("getStreamingLicenses", {
         withPins: true,
       });
-      
+
       // Filtrar solo las tarjetas inteligentes con productos asociados
       const validSmartCards = smartCardResponse.filter(
         (card) => card.products && card.products.trim() !== ""
@@ -137,7 +138,7 @@ const ProfilesPage = () => {
       if (activeProfile?.activeInThisSession) {
         console.log("El perfil está activo en esta sesión:", activeProfile.name);
         // Aquí puedes proceder con la lógica adicional, como redirigir al home
-        showModal(`Perfil "${activeProfile.name}" activado correctamente.`, "success");
+        alert(`Perfil "${activeProfile.name}" activado correctamente.`);
         navigate("/bouquets");
       } else {
         console.log("El perfil no está activo en esta sesión.");
@@ -187,8 +188,6 @@ const ProfilesPage = () => {
           onDeleteProfile={handleDeleteProfile}
         />
       )}
-
-      {/* Modal de mensajes */}
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
