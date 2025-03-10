@@ -1,5 +1,6 @@
 import { hex_md5 } from "./md5";
 import GetUdid from "./Udid";
+import { v4 as uuidv4 } from "uuid"
 
 export let CV = {
   baseUrl: "https://pmdw-1.in.tv.br/",

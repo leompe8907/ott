@@ -7,22 +7,45 @@ i18n
     resources: {
       en: {
         translation: {
+          // Login
           signIn: 'Sign In',
           username: 'Username',
           password: 'Password',
           signInButton: 'Sign In',
           loginError: 'Login Error',
           incorrectCredentials: 'Incorrect username or password.',
+          // ProfilesPage
+          whoIsWatching: 'Who is watching?',
+          editProfiles: 'Edit Profiles',
+          addProfile: 'Add Profile',
+          // Profiles
+          manageProfiles: 'Manage Profiles',
+          createProfile: 'Create Profile',
+          // Modals
+          success: 'Success',
+          error: 'Error',
         },
       },
       es: {
         translation: {
+          //Login
           signIn: 'Iniciar sesión',
           username: 'Nombre de usuario',
           password: 'Contraseña',
           signInButton: 'Iniciar sesión',
           loginError: 'Error de inicio de sesión',
           incorrectCredentials: 'Usuario o contraseña incorrectos.',
+
+          // ProfilesPage
+          whoIsWatching: '¿Quién está viendo?',
+          editProfiles: 'Editar Perfiles',
+          addProfile: 'Agregar Perfil',
+          // Profiles
+          manageProfiles: 'Gestión de Perfiles',
+          createProfile: 'Crear Perfil',
+          // Modals
+          success: 'Éxito',
+          error: 'Error',
         },
       },
     },
