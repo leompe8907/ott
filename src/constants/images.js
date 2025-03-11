@@ -8,6 +8,14 @@ const Img =[
         img:"https://pmdw-1.in.tv.br/cv_data_pub/images/1700/v/thumb.png"
     },
     {
+        id:1724,
+        img:'https://pmdw-1.in.tv.br/cv_data_pub/images/1724/v/thumb.png'
+    },
+    {
+        id:1725,
+        img:"https://pmdw-1.in.tv.br/cv_data_pub/images/1725/v/thumb.png"
+    },
+    {
         id:1701,
         img:"https://pmdw-1.in.tv.br/cv_data_pub/images/1701/v/thumb.png"
     },

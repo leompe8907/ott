@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { initNavigation, withFocusable } from "@noriginmedia/react-spatial-navigation"; // Cambiar a withFocusable
 import CreateProfileModal from "../components/CreateProfileModal";
 import EditProfilesModal from "../components/EditProfilesModal";
 import ProfilesList from "../components/ProfilesList";
@@ -7,13 +9,19 @@ import BackendService from "../services/backendService";
 import Modal from "../components/Modal";
 import "../styles/profilesPage.scss";
 
+// Inicializar la navegación (mejor hacerlo en App.js, pero aquí para simplicidad)
+initNavigation({
+  debug: false, // Para depuración
+  visualDebug: false, // Mostrar líneas de navegación (útil para pruebas)
+});
+
 const ProfilesPage = () => {
+  const { t } = useTranslation();
   const [profiles, setProfiles] = useState([]);
   const [smartCards, setSmartCards] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  //const [error, setError] = useState(null);
 
   // Estado para el modal de mensajes
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,31 +55,30 @@ const ProfilesPage = () => {
       setSmartCards(validSmartCards || []);
 
       if (validSmartCards.length === 0) {
-        showModal("No hay licencias con productos asociados disponibles.", "error");
+        showModal(t("noLicensesAvailable"), "error");
       }
     } catch (err) {
       console.error("Error al obtener perfiles o tarjetas inteligentes:", err);
-      showModal("Hubo un problema al cargar los datos. Intenta nuevamente.", "error");
+      showModal(t("loadError"), "error");
+      navigate("/login"); // Ir a la página de login si no hay perfiles o tarjetas inteligentes
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteProfile = async (profileId) => {
-    if (showModal("¿Estás seguro de que deseas eliminar este perfil?")) {
-      return;
-    }
-  
-    try {
-      setLoading(true);
-      await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
-      fetchProfilesAndSmartCards(); // Refrescar perfiles después de eliminar
-      showModal("Perfil eliminado exitosamente.", "success");
-    } catch (err) {
-      console.error("Error al eliminar perfil:", err);
-      showModal("Hubo un error al eliminar el perfil. Intenta nuevamente.", "error");
-    } finally {
-      setLoading(false);
+    if (window.confirm(t("confirmDelete"))) {
+      try {
+        setLoading(true);
+        await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
+        fetchProfilesAndSmartCards();
+        showModal(t("profileDeleted"), "success");
+      } catch (err) {
+        console.error("Error al eliminar perfil:", err);
+        showModal(t("deleteError"), "error");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -79,17 +86,16 @@ const ProfilesPage = () => {
     try {
       setLoading(true);
       await BackendService.callAuthenticatedApi("createProfile", newProfile);
-      fetchProfilesAndSmartCards(); // Actualizar la lista de perfiles
-      setShowCreateModal(false); // Cerrar el modal
-      showModal("Perfil creado exitosamente.", "success");
+      fetchProfilesAndSmartCards();
+      setShowCreateModal(false);
+      showModal(t("profileCreated"), "success");
     } catch (err) {
       console.error("Error al crear perfil:", err);
-      showModal(err.message, "error");
+      showModal(err.message || t("createError"), "error");
     } finally {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchProfilesAndSmartCards();
@@ -110,23 +116,24 @@ const ProfilesPage = () => {
 
   const handleActivateProfile = async (profileId, pin) => {
     if (pin === undefined || pin === null) {
-      pin = ""
+      pin = "";
     }
     try {
-      await BackendService.callAuthenticatedApi("setActiveProfile", { 
+      setLoading(true);
+      await BackendService.callAuthenticatedApi("setActiveProfile", {
         profileId,
-        activate:true,
-        deviceName:"Web",
+        activate: true,
+        deviceName: "Web",
         failIfInUse: false,
-        pin: pin
+        pin,
       });
       // Validar si el perfil está activo
       validateActiveProfile(profileId);
-      // Aquí puedes redirigir al usuario o actualizar algo
-      //navigate("/bouquets"); // Por ejemplo, redirigir a la página principal
     } catch (err) {
       console.error("Error al activar perfil:", err);
-      showModal("No se pudo activar el perfil. Intenta nuevamente.", "error");
+      showModal(t("activateError"), "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,42 +141,40 @@ const ProfilesPage = () => {
     try {
       const response = await BackendService.callAuthenticatedApi("getClientConfig");
       const activeProfile = response.profiles.find((profile) => profile.id === profileId);
-  
+
       if (activeProfile?.activeInThisSession) {
         console.log("El perfil está activo en esta sesión:", activeProfile.name);
-        // Aquí puedes proceder con la lógica adicional, como redirigir al home
-        alert(`Perfil "${activeProfile.name}" activado correctamente.`);
+        showModal(t("profileActivated", { name: activeProfile.name }), "success");
         navigate("/bouquets");
       } else {
-        console.log("El perfil no está activo en esta sesión.");
-        showModal("No se pudo activar el perfil. Intenta nuevamente.", "error");
+        showModal(t("activateValidationError"), "error");
       }
     } catch (error) {
       console.error("Error al validar el perfil activo:", error);
-      showModal("Hubo un problema al validar el perfil activo.", "error");
+      showModal(t("validateError"), "error");
     }
   };
-  
+
+  // Usa withFocusable correctamente con un componente de función
+  const FocusableButtonAdd = withFocusable()(({ onEnterPress, children }) => (
+    <button onClick={onEnterPress} className="add-profile-button" disabled={profiles.length >= smartCards.length} >+</button> // El componente de botón se pasa correctamente
+  ));
+
+  const FocusableButtonEdit = withFocusable()(({ onEnterPress, children }) => (
+    <button onClick={onEnterPress} className="edit-profiles-button">{t("editProfiles")}</button> // El componente de botón se pasa correctamente
+  ));
 
   return (
     <div className="profiles-page">
-      <h1>¿Quién está viendo?</h1>
+      <h1>{t("whoIsWatching")}</h1>
       {loading ? (
-        <p className="loading">Cargando...</p>
+        <div className="loading">{t("loading")}</div>
       ) : (
         <>
           <ProfilesList profiles={profiles} onActivateProfile={handleActivateProfile} />
           <div className="actions">
-            <button
-              className="add-profile-button"
-              onClick={handleShowCreateModal}
-              disabled={profiles.length >= smartCards.length}
-            >
-              +
-            </button>
-            <button className="edit-profiles-button" onClick={handleShowEditModal}>
-              Editar Perfiles
-            </button>
+            <FocusableButtonAdd onEnterPress={handleShowCreateModal}></FocusableButtonAdd>
+            <FocusableButtonEdit onEnterPress={handleShowEditModal}></FocusableButtonEdit>
           </div>
         </>
       )}
@@ -191,7 +196,7 @@ const ProfilesPage = () => {
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={modalType === "success" ? "Éxito" : "Error"}
+        title={modalType === "success" ? t("success") : t("error")}
         message={modalMessage}
         type={modalType}
       />

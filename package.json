@@ -6,6 +6,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.3.1",
+    "@noriginmedia/react-spatial-navigation": "^2.12.9",
     "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
     "crypto-js": "^4.2.0",
