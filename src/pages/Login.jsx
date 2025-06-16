@@ -132,10 +132,14 @@ const Login = () => {
         </form>
       </section>
       {isLoading && <Loading />}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>{t("loginError")}</h2> {/* Traducción del título del modal */}
-        <p>{modalMessage}</p>
-      </Modal>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={t("loginError")}
+        message={modalMessage}
+        type="error"
+      />
+
     </div>
   );
 };

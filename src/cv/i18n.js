@@ -45,7 +45,7 @@ i18n
           incorrectCredentials: 'Usuario o contraseña incorrectos.',
 
           // ProfilesPage
-          whoIsWatching: "¿Quién está viendo?",
+          whoIsWatching: "¿Quién está viendo ahora?",
           loading: "Cargando...",
           noLicensesAvailable: "No hay licencias con productos asociados disponibles.",
           loadError: "Fallo al cargar los perfiles o tarjetas inteligentes. Intenta nuevamente.",
@@ -55,7 +55,7 @@ i18n
           profileCreated: "Perfil creado exitosamente.",
           createError: "Error al crear el perfil.",
           activateError: "No se pudo activar el perfil. Intenta nuevamente.",
-          profileActivated: "Perfil '{{name}}' activado correctamente.",
+          profileActivated: "Bienvenido '{{name}}'.",
           activateValidationError: "Fallo al activar el perfil. Intenta nuevamente.",
           validateError: "Hubo un problema al validar el perfil activo.",
           editProfiles: "-",
