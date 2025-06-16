@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaInfoCircle } from "react-icons/fa";
 import "../styles/modal.scss";
 
@@ -10,7 +11,9 @@ const icons = {
   info: <FaInfoCircle className="icon info" />,
 };
 
+
 const Modal = ({ isOpen, onClose, title, message, type, actionLabel, onAction }) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
@@ -23,7 +26,7 @@ const Modal = ({ isOpen, onClose, title, message, type, actionLabel, onAction })
         {message && <p className="modal-body">{message}</p>}
         <div className="modal-footer">
           {onAction && <button onClick={onAction}>{actionLabel || "Aceptar"}</button>}
-          <button onClick={onClose}>Cerrar</button>
+          <button onClick={onClose}>{t("cloase")}</button>
         </div>
       </div>
     </div>

@@ -1,106 +1,130 @@
 import React, { useState } from "react";
-import Img from "../constants/images"; // Lista de imágenes
-import Modal from "./Modal";
+import { useTranslation } from "react-i18next"; 
+import Img from "../constants/images";
 import "../styles/createProfileModal.scss";
+import Modal from "./Modal"
 
 const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) => {
+  const { t } = useTranslation();
   const [newProfileName, setNewProfileName] = useState("");
   const [selectedImage, setSelectedImage] = useState(Img[0]?.id || null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState({ open: false, message: "", type: "" });
 
-  // Estado del modal de mensajes
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalType, setModalType] = useState("success");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Función para mostrar el modal con mensajes
-  const showModal = (message, type = "error") => {
-    setModalMessage(message);
-    setModalType(type);
-    setModalOpen(true);
-  };
-
-  const handleCreateProfile = () => {
     if (!newProfileName.trim()) {
-      showModal("El nombre del perfil no puede estar vacío.");
+      setFeedback({ open: true, message: t("nameRequired"), type: "error" });
       return;
     }
 
     if (!selectedImage) {
-      showModal("Debe seleccionar una imagen.");
+      setFeedback({ open: true, message: t("selectImage"), type: "error" });
       return;
     }
 
-    // Validar si hay tarjetas disponibles
-    const availableSmartCard = smartCards.find(
-      (card) => !profiles.some((profile) => profile.sn === card.key)
+    const availableCard = smartCards.find(card => 
+      !profiles.some(profile => profile.sn === card.key)
     );
 
-    if (!availableSmartCard) {
-      showModal("No hay tarjetas inteligentes disponibles para crear un nuevo perfil.");
+    if (!availableCard) {
+      setFeedback({ open: true, message: t("noCards"), type: "error" });
       return;
     }
-    console.log(availableSmartCard);
 
-    // Crear perfil con la tarjeta inteligente disponible
-    onCreateProfile({
-      name: newProfileName,
-      imageId: selectedImage,
-      license: availableSmartCard.key,
-      pin: availableSmartCard.pin,
-    });
+    setIsLoading(true);
+    try {
+      await onCreateProfile({
+        name: newProfileName,
+        imageId: selectedImage,
+        license: availableCard.key,
+        pin: availableCard.pin
+      });
 
-    // Limpiar el formulario y cerrar el modal
-    setNewProfileName("");
-    setSelectedImage(Img[0]?.id || null);
-    showModal("Perfil creado exitosamente.", "success");
+      setFeedback({ 
+        open: true, 
+        message: t("profileCreated"), 
+        type: "success" 
+      });
 
-    setTimeout(() => {
-      onClose();
-    }, 2000); // Cierra el modal después de 2 segundos
+      setTimeout(() => {
+        setNewProfileName("");
+        setSelectedImage(Img[0]?.id || null);
+        onClose();
+      }, 1500);
+    } catch (error) {
+      setFeedback({ 
+        open: true, 
+        message: t("profileError"), 
+        type: "error" 
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="create-profile-modal">
-      <div className="modal-content">
-        <h2>Crear Nuevo Perfil</h2>
-        <div className="form">
-          <label htmlFor="profileName">Nombre del Perfil</label>
-          <input
-            type="text"
-            id="profileName"
-            placeholder="Nombre del perfil"
-            value={newProfileName}
-            onChange={(e) => setNewProfileName(e.target.value)}
-          />
-          <div className="image-selector">
-            <h3>Selecciona una Imagen</h3>
-            <div className="image-list">
+    <div className="modal-container">
+      <div className="profile-modal">
+        <div className="modal-header">
+          <h2>{t("addProfile")}</h2>
+        </div>
+
+        <form onSubmit={handleSubmit} className="modal-form">
+          <div className="form-group">
+            <input
+              type="text"
+              value={newProfileName}
+              onChange={(e) => setNewProfileName(e.target.value)}
+              maxLength={30}
+              placeholder={t("pleaceHolder")}
+            />
+            <span className="char-count">{newProfileName.length}/30</span>
+          </div>
+
+          <div className="avatar-selection">
+            <h3>{t("selectImg")}</h3>
+            <div className="avatar-grid">
               {Img.map((img) => (
-                <img
+                <div 
                   key={img.id}
-                  src={img.img}
-                  alt={`Imagen ${img.id}`}
+                  className={`avatar-option ${selectedImage === img.id ? 'selected' : ''}`}
                   onClick={() => setSelectedImage(img.id)}
-                  className={selectedImage === img.id ? "selected" : ""}
-                />
+                >
+                  <img src={img.img} alt={`Avatar ${img.id}`} />
+                  {selectedImage === img.id && (
+                    <div className="checkmark">✓</div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
-          <button className="create-button" onClick={handleCreateProfile}>
-            Crear Perfil
-          </button>
-          <button className="close-button" onClick={onClose}>
-          Cerrar
-        </button>
-        </div>
+
+          <div className="form-actions">
+            <button type="button" onClick={onClose} className="cancel-btn">
+              {t("cancel")}
+            </button>
+            <button type="submit" className="submit-btn" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <span className="spinner"></span>
+                  {t("loading", "Creando...")}
+                </>
+              ) : (
+                t("accept")
+              )}
+            </button>
+          </div>
+        </form>
       </div>
-      {/* Modal de mensajes */}
+
       <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={modalType === "success" ? "Éxito" : "Error"}
-        message={modalMessage}
-        type={modalType}
+        isOpen={feedback.open}
+        onClose={() => setFeedback({ ...feedback, open: false })}
+        title={t(feedback.type)}
+        message={feedback.message}
+        type={feedback.type}
       />
     </div>
   );

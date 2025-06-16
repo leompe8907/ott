@@ -52,16 +52,29 @@ i18n
           confirmDelete: "¿Estás seguro de que deseas eliminar este perfil?",
           profileDeleted: "Perfil eliminado exitosamente.",
           deleteError: "Error al eliminar el perfil. Intenta nuevamente.",
-          profileCreated: "Perfil creado exitosamente.",
           createError: "Error al crear el perfil.",
           activateError: "No se pudo activar el perfil. Intenta nuevamente.",
           profileActivated: "Bienvenido '{{name}}'.",
           activateValidationError: "Fallo al activar el perfil. Intenta nuevamente.",
           validateError: "Hubo un problema al validar el perfil activo.",
           editProfiles: "-",
+
+          //CreateProfile
+          addProfile: "Agrega un perfil",
+          pleaceHolder: "Ej: mi perfil",
+          selectImg: "Selecciona una imagen",
+          accept:"Crear Perfil",
+          cancel: "Cancelar",
+          nameRequired: "El nombre no puede estar vacío",
+          selectImage: "Selecciona una imagen",
+          noCards: "No hay tarjetas disponibles",
+          profileCreated: "Perfil creado con éxito",
+          profileError: "Error al crear perfil",
+
           // Modals
           success: 'Éxito',
           error: 'Error',
+          close: "Cerrar" 
         },
       },
     },
