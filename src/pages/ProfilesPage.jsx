@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { initNavigation, withFocusable } from "@noriginmedia/react-spatial-navigation"; // Cambiar a withFocusable
-import CreateProfileModal from "../components/CreateProfileModal";
-import EditProfilesModal from "../components/EditProfilesModal";
-import ProfilesList from "../components/ProfilesList";
+import CreateProfileModal from "../components/profiles/CreateProfileModal";
+import ProfilesList from "../components/profiles/ProfilesList";
 import BackendService from "../services/backendService";
 import Modal from "../components/Modal";
 import "../styles/profilesPage.scss";
@@ -144,9 +143,11 @@ const ProfilesPage = () => {
         <div className="loading">{t("loading")}</div>
       ) : (
         <>
-          <ProfilesList profiles={profiles} onActivateProfile={handleActivateProfile} />
-          <div className="actions">
-            <FocusableButtonAdd onEnterPress={handleShowCreateModal}></FocusableButtonAdd>
+          <div className="profiles-header">
+            <ProfilesList profiles={profiles} onActivateProfile={handleActivateProfile} />
+            {profiles.length < smartCards.length && (
+              <FocusableButtonAdd onEnterPress={handleShowCreateModal} />
+            )}
           </div>
         </>
       )}
@@ -167,6 +168,7 @@ const ProfilesPage = () => {
       />
     </div>
   );
+
 };
 
 export default ProfilesPage;

@@ -4,11 +4,11 @@ import Splash from "./pages/Splash";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ProfilesPage  from "./pages/ProfilesPage";
-import EditProfilesModal from "./components/EditProfilesModal";
-import CreateProfileModal from "./components/CreateProfileModal";
-import ProfilesList from "./components/ProfilesList";
+import EditProfilesModal from "./components/profiles/EditProfilesModal";
+import CreateProfileModal from "./components/profiles/CreateProfileModal.jsx";
+import ProfilesList from "./components/profiles/ProfilesList.jsx";
 import Bouquets from "./components/Bouquets";
-import AuthValidator from "./components/AuthValidator";
+import AuthValidator from "./hooks/AuthValidator.jsx";
 
 const App = () => {
   return (

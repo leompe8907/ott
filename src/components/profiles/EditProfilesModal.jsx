@@ -1,6 +1,6 @@
 
 import React from "react";
-import "../styles/editProfilesModal.scss";
+import "../../styles/editProfilesModal.scss";
 
 const EditProfilesModal = ({ profiles, onClose, onDeleteProfile }) => {
   
