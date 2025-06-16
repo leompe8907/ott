@@ -20,7 +20,6 @@ const ProfilesPage = () => {
   const [profiles, setProfiles] = useState([]);
   const [smartCards, setSmartCards] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Estado para el modal de mensajes
@@ -66,22 +65,6 @@ const ProfilesPage = () => {
     }
   };
 
-  const handleDeleteProfile = async (profileId) => {
-    if (window.confirm(t("confirmDelete"))) {
-      try {
-        setLoading(true);
-        await BackendService.callAuthenticatedApi("deleteProfile", { profileId });
-        fetchProfilesAndSmartCards();
-        showModal(t("profileDeleted"), "success");
-      } catch (err) {
-        console.error("Error al eliminar perfil:", err);
-        showModal(t("deleteError"), "error");
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   const handleCreateProfile = async (newProfile) => {
     try {
       setLoading(true);
@@ -106,12 +89,6 @@ const ProfilesPage = () => {
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
     fetchProfilesAndSmartCards(); // Refresh data after creating a profile
-  };
-
-  const handleShowEditModal = () => setShowEditModal(true);
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-    fetchProfilesAndSmartCards(); // Refresh data after editing profiles
   };
 
   const handleActivateProfile = async (profileId, pin) => {
@@ -160,10 +137,6 @@ const ProfilesPage = () => {
     <button onClick={onEnterPress} className="add-profile-button" disabled={profiles.length >= smartCards.length} >+</button> // El componente de botón se pasa correctamente
   ));
 
-  const FocusableButtonEdit = withFocusable()(({ onEnterPress, children }) => (
-    <button onClick={onEnterPress} className="edit-profiles-button">{t("editProfiles")}</button> // El componente de botón se pasa correctamente
-  ));
-
   return (
     <div className="profiles-page">
       <h1>{t("whoIsWatching")}</h1>
@@ -174,7 +147,6 @@ const ProfilesPage = () => {
           <ProfilesList profiles={profiles} onActivateProfile={handleActivateProfile} />
           <div className="actions">
             <FocusableButtonAdd onEnterPress={handleShowCreateModal}></FocusableButtonAdd>
-            <FocusableButtonEdit onEnterPress={handleShowEditModal}></FocusableButtonEdit>
           </div>
         </>
       )}
@@ -184,13 +156,6 @@ const ProfilesPage = () => {
           profiles={profiles}
           onClose={handleCloseCreateModal}
           onCreateProfile={handleCreateProfile}
-        />
-      )}
-      {showEditModal && (
-        <EditProfilesModal
-          profiles={profiles}
-          onClose={handleCloseEditModal}
-          onDeleteProfile={handleDeleteProfile}
         />
       )}
       <Modal

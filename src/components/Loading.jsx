@@ -1,11 +1,12 @@
-import React from "react";
+import { useTranslation } from "react-i18next"; 
 import "../styles/loading.scss"; // Estilos para la animación
 
 const Loading = () => {
+  const { t } = useTranslation();
   return (
     <div className="loading-overlay">
       <div className="spinner"></div>
-      <p>Loading...</p>
+      <p>{t("loading")}</p>
     </div>
   );
 };

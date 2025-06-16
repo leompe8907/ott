@@ -46,7 +46,6 @@ i18n
 
           // ProfilesPage
           whoIsWatching: "¿Quién está viendo ahora?",
-          loading: "Cargando...",
           noLicensesAvailable: "No hay licencias con productos asociados disponibles.",
           loadError: "Fallo al cargar los perfiles o tarjetas inteligentes. Intenta nuevamente.",
           confirmDelete: "¿Estás seguro de que deseas eliminar este perfil?",
@@ -74,7 +73,8 @@ i18n
           // Modals
           success: 'Éxito',
           error: 'Error',
-          close: "Cerrar" 
+          close: "Cerrar",
+          loading: "Cargando...",
         },
       },
     },
