@@ -121,10 +121,10 @@ const Login = () => {
             <label htmlFor="password" className="password">
               {t("password")}
             </label>{" "}
+          </div>
             <span className="password-toggle" onClick={togglePasswordVisibility}>
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-          </div>
           {/* Traducción del botón Sign In */}
           <button type="submit" disabled={isLoading}>
             {isLoading ? t("signingIn") : t("signInButton")}
