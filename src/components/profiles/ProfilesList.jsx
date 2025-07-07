@@ -1,6 +1,6 @@
 import React from "react";
 import { withFocusable } from "@noriginmedia/react-spatial-navigation"; // Cambiado a withFocusable
-import "../../styles/profilesList.scss";
+import "../../styles/Profile/profilesList.scss";
 
 const ProfileCard = withFocusable()(({ profile, onEnterPress }) => (
   <div className="profile-card" onClick={onEnterPress}>

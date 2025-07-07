@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next"; 
 import Img from "../../constants/images";
-import "../../styles/createProfileModal.scss";
+import "../../styles/Profile/createProfileModal.scss";
 import Modal from "../Modal"
 
 const CreateProfileModal = ({ smartCards, profiles, onClose, onCreateProfile }) => {

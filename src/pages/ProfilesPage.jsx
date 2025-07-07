@@ -6,7 +6,7 @@ import CreateProfileModal from "../components/profiles/CreateProfileModal";
 import ProfilesList from "../components/profiles/ProfilesList";
 import BackendService from "../services/backendService";
 import Modal from "../components/Modal";
-import "../styles/profilesPage.scss";
+import "../styles/Profile/profilesPage.scss";
 
 // Inicializar la navegación (mejor hacerlo en App.js, pero aquí para simplicidad)
 initNavigation({
